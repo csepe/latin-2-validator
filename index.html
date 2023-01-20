@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Latin 2 validator</title>
+    <style>
+        body {
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        button,
+        textarea {
+            height: 100px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            width: 100%;
+            margin: 0 1%;
+            display: block;
+            background-color: #fff;
+            padding: 4px;
+            border-radius: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <p><strong>Latin 2 validator</strong></p>
+        <div style="display: flex;">
+            <textarea id="textarea" oninput="testString();"></textarea>
+        </div>
+        <div>
+            <p style="color: red; display: none;" id="errorText">A csatolni kívánt melléklet neve nem megengedett
+                karaktert tartalmaz. Kéjük nevezze át a fájlt, lehetőleg ne használjon speciális szimbólumokat, és
+                ékezetes betűket.
+            <br/><br/><span style="color: black;">Nem megengedett karakterek: <span id="notAllowedChars"></span></span>
+            </p>
+            <p style="color: green; display: none;" id="succesText">A fájlnév megfelelő.</p>
+        </div>
+        <script>
+            const errorText = document.querySelector('#errorText');
+            const succesText = document.querySelector('#succesText');
+            const textarea = document.querySelector('#textarea');
+            const notAllowedChars = document.querySelector('#notAllowedChars');
+
+            const regexString = '\u0020-\u007E\u00A0\u00A4\u00A7\u00A8\u00AD\u00B0\u00B4\u00B8\u00C1\u00C2\u00C4\u00C7\u00C9\u00CB\u00CD\u00CE\u00D3\u00D4\u00D6\u00D7\u00DA\u00DC\u00DD\u00DF\u00E1\u00E2\u00E4\u00E7\u00E9\u00EB\u00ED\u00EE\u00F3\u00F4\u00F6\u00F7\u00FA\u00FC\u00FD\u0102-\u0107\u010C-\u0111\u0118-\u011B\u0139\u013A\u013D\u013E\u0141-\u0144\u0147\u0148\u0150\u0151\u0154\u0155\u0158-\u015B\u015E-\u0165\u016E-\u0171\u0179-\u017E\u02C7\u02D8\u02D9\u02DB\u02DD';
+            const allowedRegex = new RegExp('^[' + regexString + ']*$');
+            const notAllowedRegex = new RegExp('[^' + regexString + ']', 'g');
+
+            function validator(str) {
+                return new RegExp(allowedRegex).test(str);
+            }
+            function testString() {
+                const string = textarea.value.trim();
+                if (string !== '') {
+                    if (validator(string)) {
+                        errorText.style.display = 'none';
+                        succesText.style.display = 'block';
+                        notAllowedChars.innerHTML = '';
+                    } else {
+                        succesText.style.display = 'none';
+                        errorText.style.display = 'block';
+                        const notAllowedChar = JSON.stringify(string.match(notAllowedRegex));
+                        notAllowedChars.innerHTML = notAllowedChar;
+                    }
+                } else {
+                    succesText.style.display = 'none';
+                    errorText.style.display = 'none';
+                    notAllowedChars.innerHTML = '';
+                }
+            }
+        </script>
+</body>
+
+</html>
